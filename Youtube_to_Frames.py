@@ -7,9 +7,6 @@ import math
 
 def getFrames(path):
     print("Getting frames")
-    #path = path.replace(".", "")
-    #path = "F:/VIALab/DownloadFrames" + path
-    #path = "F:/Repositorios/Youtube_to_Frames" + path
     arq_name = os.listdir(path)[0]
     arq_path = (path + "/" + arq_name)
     print(arq_path.replace("/", "\\"))
@@ -57,19 +54,15 @@ def downloadYouTube(video_id):
     yt.download(path)
     
     currentPATH = str(Path().absolute())
-    #print("currentPATH: " + currentPATH)
     path = path.replace(".", "")
-    #print("Path1: " + path)
     path = path.replace("/", "\\")
-    #print("Path2: " + currentPATH + path)
     path = currentPATH + path
 
     getFrames(path)
 
 
-#currentPATH = str(Path().absolute())
 
 
-# The youtube ID
+# downloadYouTube(video_id)
 downloadYouTube('UNzvlXusQro')
 downloadYouTube('lk6eACQdY3w')
