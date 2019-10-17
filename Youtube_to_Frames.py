@@ -2,45 +2,51 @@ from pathlib import Path
 from pytube import YouTube
 import os
 import cv2
+import math
 
 
 def getFrames(path):
-    path = path.replace(".", "")
+    print("Getting frames")
+    #path = path.replace(".", "")
     #path = "F:/VIALab/DownloadFrames" + path
-    path = "PATHATUAL" + path
+    #path = "F:/Repositorios/Youtube_to_Frames" + path
     arq_name = os.listdir(path)[0]
-    print("List: " + arq_name)
-    cam = cv2.VideoCapture((path + "/" + arq_name)) 
+    arq_path = (path + "/" + arq_name)
+    print(arq_path.replace("/", "\\"))
 
     path += "/frames"
     if not os.path.exists(path):
         os.makedirs(path)
-    # frame 
-    currentframe = 0
-    while(True): 
-      
-        # reading from frame 
-        ret,frame = cam.read() 
-    
-        if ret: 
-            # if video is still left continue creating images 
+
+
+    vidcap = cv2.VideoCapture(arq_path)
+
+    def getFrame(sec, currentframe):
+        vidcap.set(cv2.CAP_PROP_POS_MSEC,sec*1000)
+        hasFrames,image = vidcap.read()
+        if hasFrames:
+            print("Frame " + "[" + str(currentframe) + "]")
             name = path + '/frame' + str(currentframe) + '.jpg'
-            print ('Creating...' + name) 
-    
-            # writing the extracted images 
-            cv2.imwrite(name, frame) 
-    
-            # increasing counter so that it will 
-            # show how many frames are created 
-            currentframe += 20
-        else: 
-            break
-    
+
+            cv2.imwrite(name, image) 
+            currentframe += 1
+        return hasFrames
+
+    currentframe = 0
+    sec = 0
+    frameRate = 5 # it will capture image in each 0.5 second
+    success = getFrame(sec, currentframe)
+    while success:
+        currentframe += 1
+        sec = sec + frameRate
+        sec = round(sec, 2)
+        success = getFrame(sec, currentframe)
+
     # Release all space and windows once done 
-    cam.release() 
     cv2.destroyAllWindows() 
 
 def downloadYouTube(video_id):
+    print("Downloading the video: " + video_id)
     videourl = "https://www.youtube.com/watch?v=" + video_id
     path = "./videos/" + video_id
 
@@ -49,11 +55,21 @@ def downloadYouTube(video_id):
     if not os.path.exists(path):
         os.makedirs(path)
     yt.download(path)
+    
+    currentPATH = str(Path().absolute())
+    #print("currentPATH: " + currentPATH)
+    path = path.replace(".", "")
+    #print("Path1: " + path)
+    path = path.replace("/", "\\")
+    #print("Path2: " + currentPATH + path)
+    path = currentPATH + path
+
     getFrames(path)
 
 
-#thisPATH = str(Path().absolute())
+#currentPATH = str(Path().absolute())
 
 
 # The youtube ID
 downloadYouTube('UNzvlXusQro')
+downloadYouTube('lk6eACQdY3w')
